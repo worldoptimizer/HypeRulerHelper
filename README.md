@@ -2,13 +2,14 @@
 
 ## Overview
 
-`HypeRulerHelper` is a JavaScript utility designed for use with [Tumult Hype](https://tumult.com/hype/). It provides a visual ruler on the screen to assist developers and designers in measuring and aligning elements within Hype scenes. The ruler is dynamically adjusted to the height of the element it's attached to and supports high-resolution displays, like Retina screens.
+`HypeRulerHelper` is a JavaScript utility designed for use with [Tumult Hype](https://tumult.com/hype/). It provides a visual ruler on the screen to assist developers and designers in measuring and aligning elements within Hype scenes. The ruler is dynamically adjusted to the height of the element it's attached to, supports high-resolution displays like Retina screens, and allows for the placement of custom markers.
 
 ## Features
 
 - **Dynamic Measurement**: Automatically adjusts to the height of the associated Hype element.
 - **High DPI Support**: Optimized for high-resolution displays, ensuring clear and sharp ruler markings.
-- **Scene-Aware**: Refreshes when navigating between different Hype scenes.
+- **Marker Placement**: Enables the addition of customizable markers at specific positions along the ruler, with optional labels.
+- **Scene-Aware**: Refreshes when navigating between different Hype scenes and supports scene-specific markers that reset on scene load.
 - **Responsive Design**: Updates in real-time to changes in element dimensions.
 
 ## Installation
@@ -26,10 +27,14 @@
 
 ## Usage
 
-`HypeRulerHelper` automatically initializes a ruler on the left side of the screen. It attaches to the Hype scene element and dynamically adjusts its size based on the element's height. 
+`HypeRulerHelper` automatically initializes a ruler on the left side of the screen. It attaches to the Hype scene element and dynamically adjusts its size based on the element's height.
 
 ### Basic Usage
 Simply including the script in your Hype project as described in the installation steps is enough to get started. `HypeRulerHelper` does not require any additional initialization.
+
+### Adding Markers
+- **Add a Document Marker**: `hypeDocument.addMarker(position, label)` - Adds a global marker (green) at the specified position with an optional label.
+- **Add a Scene Marker**: `hypeDocument.addSceneMarker(position, label)` - Adds a scene-specific marker (orange) at the specified position with an optional label. These markers reset when the scene changes.
 
 ### Advanced Customization
 For advanced users looking to customize the ruler (e.g., change its position or style), modifications can be made directly in the `HypeRulerHelper.js` file.
