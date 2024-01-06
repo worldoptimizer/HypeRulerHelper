@@ -56,7 +56,6 @@ if ("HypeRulerHelper" in window === false) window['HypeRulerHelper'] = (function
 		ctx.fill();
 		ctx.stroke();
 	
-		
 		ctx.fillStyle = 'white';
 		ctx.fillText(text, x + padding * 2, y + 4);
 	
