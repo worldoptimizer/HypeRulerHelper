@@ -7,13 +7,14 @@ MIT-license
 
 /*
 * Version-History
-* 1.0.0  Initial release under MIT-license
 * 1.0.1  Added marker feature with labels.
+* 1.0.0  Initial release under MIT-license
 */
 
 if ("HypeRulerHelper" in window === false) window['HypeRulerHelper'] = (function() {
 	let documentMarkers = [];
 	let sceneMarkers = [];
+	let resizeObserver = null;
 
 	function createHiPPICanvas(width, height) {
 		const ratio = window.devicePixelRatio;
@@ -52,7 +53,7 @@ if ("HypeRulerHelper" in window === false) window['HypeRulerHelper'] = (function
 		ctx.quadraticCurveTo(x, y - boxHeight / 2, x + 2, y - boxHeight / 2);
 		ctx.closePath();
 		ctx.fill();
-	
+		
 		ctx.fillStyle = 'white';
 		ctx.fillText(text, x + padding * 2, y + 4);
 	
@@ -149,13 +150,22 @@ if ("HypeRulerHelper" in window === false) window['HypeRulerHelper'] = (function
 			sceneMarkers.push({ position, label });
 			refreshCanvas(element);
 		};
-
-		refreshCanvas(element);
 	}
 
 	function HypeScenePrepareForDisplay(hypeDocument, element, event) {
 		sceneMarkers = [];
+		
+		if (resizeObserver) {
+			resizeObserver.disconnect();
+		}
+
 		refreshCanvas(element);
+
+		resizeObserver = new ResizeObserver(entries => {
+			refreshCanvas(entry.target);
+		});
+
+		resizeObserver.observe(element);
 	}
 
 	if("HYPE_eventListeners" in window === false) { window.HYPE_eventListeners = Array(); }
