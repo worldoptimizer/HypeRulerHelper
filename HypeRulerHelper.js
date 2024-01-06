@@ -162,7 +162,7 @@ if ("HypeRulerHelper" in window === false) window['HypeRulerHelper'] = (function
 		refreshCanvas(element);
 
 		resizeObserver = new ResizeObserver(entries => {
-			refreshCanvas(entry.target);
+			refreshCanvas(element);
 		});
 
 		resizeObserver.observe(element);
