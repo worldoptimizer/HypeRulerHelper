@@ -33,8 +33,6 @@ if ("HypeRulerHelper" in window === false) window['HypeRulerHelper'] = (function
 		ctx.save();
 	
 		ctx.fillStyle = color;
-		ctx.strokeStyle = 'black';
-		ctx.lineWidth = 1;
 	
 		const padding = 2;
 		const metrics = ctx.measureText(text);
@@ -54,7 +52,6 @@ if ("HypeRulerHelper" in window === false) window['HypeRulerHelper'] = (function
 		ctx.quadraticCurveTo(x, y - boxHeight / 2, x + 2, y - boxHeight / 2);
 		ctx.closePath();
 		ctx.fill();
-		ctx.stroke();
 	
 		ctx.fillStyle = 'white';
 		ctx.fillText(text, x + padding * 2, y + 4);
