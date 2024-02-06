@@ -7,8 +7,8 @@ MIT-license
 
 /*
 * Version-History
-* 1.0.1  Added marker feature with labels.
 * 1.0.0  Initial release under MIT-license
+* 1.0.1  Added marker feature with labels.
 */
 
 if ("HypeRulerHelper" in window === false) window['HypeRulerHelper'] = (function() {
