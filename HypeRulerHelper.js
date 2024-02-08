@@ -1,6 +1,5 @@
 /*!
  * Hype RulerHelper 1.0.3
- * Enhanced to manage markers in an object and provide marker management functions
  * Copyright (c) 2024 Max Ziebell, (https://maxziebell.de). MIT-license
  */
 
