@@ -1,6 +1,6 @@
 /*!
- * Hype RulerHelper 1.0.2
- * Modified to include customizable marker colors and global marker indicators
+ * Hype RulerHelper 1.0.3
+ * Enhanced to manage markers in an object and provide marker management functions
  * Copyright (c) 2024 Max Ziebell, (https://maxziebell.de). MIT-license
  */
 
@@ -9,12 +9,31 @@
  * 1.0.0 Initial release under MIT-license
  * 1.0.1 Added marker feature with labels
  * 1.0.2 Added customizable marker colors and global marker indicators
+ * 1.0.3 Rewritten to store markers in an object and allow marker management
  */
 
 if ("HypeRulerHelper" in window === false) window['HypeRulerHelper'] = (function() {
-    let documentMarkers = [];
-    let sceneMarkers = [];
+    let markers = {
+        document: {},
+        scene: {}
+    };
     let resizeObserver = null;
+
+    /**
+     * @function debounceByRequestFrame
+     * @param {function} fn - the function to be debounced
+     * @returns {function} - the debounced function
+     */
+    function debounceByRequestFrame(fn) {
+        return function() {
+            if (fn.timeout) return;
+            var args = arguments;
+            fn.timeout = requestAnimationFrame(function() {
+                fn.apply(this, args);
+                fn.timeout = null;
+            }.bind(this));
+        };
+    }
 
     function createHiPPICanvas(width, height) {
         const ratio = window.devicePixelRatio;
@@ -101,31 +120,16 @@ if ("HypeRulerHelper" in window === false) window['HypeRulerHelper'] = (function
                 ctx.stroke();
             }
 
-            // Draw document markers
-            documentMarkers.forEach(marker => {
-                const { position, label, color = 'green' } = marker;
+            // Draw document and scene markers
+            Object.values(markers.document).concat(Object.values(markers.scene)).forEach(marker => {
+                const { position, color = 'green' } = marker;
                 ctx.strokeStyle = color;
                 ctx.beginPath();
                 ctx.moveTo(0, position);
                 ctx.lineTo(60, position);
                 ctx.stroke();
-
-                if (label) {
-                    drawLabel(ctx, "🌐 " + label, 60, position, color); // Prepend unicode world icon to label
-                }
-            });
-
-            // Draw scene markers
-            sceneMarkers.forEach(marker => {
-                const { position, label, color = 'orange' } = marker;
-                ctx.strokeStyle = color;
-                ctx.beginPath();
-                ctx.moveTo(0, position);
-                ctx.lineTo(60, position);
-                ctx.stroke();
-
-                if (label) {
-                    drawLabel(ctx, label, 60, position, color);
+                if (marker.label) {
+                    drawLabel(ctx, marker.label, 60, position, color);
                 }
             });
         }
@@ -143,25 +147,38 @@ if ("HypeRulerHelper" in window === false) window['HypeRulerHelper'] = (function
     }
 
     function HypeDocumentLoad(hypeDocument, element, event) {
-        hypeDocument.addMarker = function(position, label, color) {
-            documentMarkers.push({ position, label, color });
+        hypeDocument.addMarker = function(position, label, color = 'green') {
+            markers.document[label] = { position, label, color };
             refreshCanvas(element);
         };
 
-        hypeDocument.addSceneMarker = function(position, label, color) {
-            sceneMarkers.push({ position, label, color });
+        hypeDocument.addSceneMarker = function(position, label, color = 'orange') {
+            markers.scene[label] = { position, label, color };
             refreshCanvas(element);
         };
+
+        hypeDocument.resetMarkers = function() {
+            markers.document = {};
+            markers.scene = {};
+            refreshCanvas(element);
+        };
+        
+        hypeDocument.removeMarker = function(label) {
+            delete markers.document[label];
+            refreshCanvas(element);
+        };
+
+        hypeDocument.refreshMarkers = debounceByRequestFrame(function() {
+            refreshCanvas(element);
+        });
     }
 
     function HypeScenePrepareForDisplay(hypeDocument, element, event) {
-        sceneMarkers = [];
+        markers.scene = {};
 
         if (resizeObserver) {
             resizeObserver.disconnect();
         }
-
-        refreshCanvas(element);
 
         resizeObserver = new ResizeObserver(entries => {
             refreshCanvas(element);
@@ -175,7 +192,7 @@ if ("HypeRulerHelper" in window === false) window['HypeRulerHelper'] = (function
     window.HYPE_eventListeners.push({type: "HypeScenePrepareForDisplay", callback: HypeScenePrepareForDisplay});
 
     const HypeRulerHelper = {
-        version: '1.0.2',
+        version: '1.0.3',
     };
 
     return HypeRulerHelper;
